@@ -106,6 +106,10 @@ Inherit from Apache::No404Proxy.
 
 Define C<translate()> method.
 
+=item *
+
+Add C<PerlTransHandler Your::URLTranslator> in httpd.conf or so.
+
 =back
 
 That's all. Here is an example of implementation, extracted from
