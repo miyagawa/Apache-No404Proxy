@@ -2,7 +2,7 @@ package Apache::No404Proxy;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = '0.03';
+$VERSION = 0.05;
 
 use Apache::Constants qw(:response);
 use LWP::UserAgent;
@@ -31,31 +31,25 @@ sub proxy_handler {
 
     my $res = LWP::UserAgent->new->simple_request($request);
     $r->content_type($res->header('Content-type'));
-    if ($res->code == 404 && ! $class->exclude($r->uri)) {
-	my $cache = $class->translate($r->uri);
-	# detect LOOP
-	{
-	    my $origuri  = URI->new($r->uri);
-	    my $cacheuri = URI->new($cache);
-	    if ($origuri->host eq $cacheuri->host &&
-                $origuri->path eq $cacheuri->path) {
-		require Apache::Log;
-		$r->log->error('Apache::No404Proxy: detecting 404 loops. Stopped.');
-		return NOT_FOUND;
-	    }
-	}
 
-	$r->method('GET');
-	$r->headers_in->unset('Content-length');
-	$r->header_out(Location => $cache);
-	return REDIRECT;
+    my $body;
+    if ($res->code == 404 && ! $class->exclude($r->uri)) {
+	$body = $class->fetch($r);
+	unless ($body) {
+	    require Apache::Log;
+	    $r->log->error('Apache::No404Proxy: no cache found');
+	    return NOT_FOUND;
+	}
+    } else {
+	$body = $res->content;
     }
 
     $r->status($res->code);
     $r->status_line($res->status_line);
-    $res->scan(sub { $r->header_out(@_); });
+    my $table = $r->headers_out;
+    $res->scan(sub { $table->add(@_); });
     $r->send_http_header();
-    $r->print($res->content);
+    $r->print($body);
 
     return OK;
 }
@@ -66,12 +60,12 @@ sub exclude {
     return $uri =~ /\.(?:gif|jpe?g|png)$/i;
 }
 
-sub translate {
-    my($class, $uri) = @_;
+sub fetch {
+    my($class, $r) = @_;
 
     # Default to Google. Oddly enough delegating to my own child!
     require Apache::No404Proxy::Google;
-    Apache::No404Proxy::Google->translate($uri);
+    Apache::No404Proxy::Google->fetch($r);
 }
 
 
@@ -80,78 +74,25 @@ __END__
 
 =head1 NAME
 
-Apache::No404Proxy - 404 Redirecting Proxy
+Apache::No404Proxy - 404 free Proxy
 
 =head1 SYNOPSIS
 
   # in httpd.conf
   PerlTransHandler Apache::No404Proxy # default uses ::Google
+  PerlSetVar GoogleLicenseKey **************
 
 =head1 DESCRIPTION
 
 Oops, 404 Not found. But wait..., there is a Google cache!
 
 Apache::No404Proxy serves as a proxy server, which automaticaly
-detects 404 responses and redirects your browser to Google cache.
+detects 404 responses and fetches Google cache via SOAP. You need your
+Google account to use this module. See Google Web API terms for
+details.
 
 Set your browser's proxy setting to Apache::No404Proxy based server,
 and it becomes 404 free now!
-
-See also L</"RESRICTIONS FOR USE"> before you use this.
-
-=head1 SUBCLASSING
-
-Default cache archive is Google's one. Here is how you customize this.
-
-=over 4
-
-=item *
-
-Declare your URL translator class.
-
-=item *
-
-Inherit from Apache::No404Proxy.
-
-=item *
-
-Define C<translate()> method.
-
-=back
-
-That's all. Here is an example of implementation, extracted from
-Apache::No404Proxy::Google.
-
-  package Apache::No404Proxy::Google;
-
-  use WWW::Cache::Google;
-  use base qw(Apache::No404Proxy);
-
-  sub translate {
-      my($class, $uri) = @_;
-      return WWW::Cache::Google->new($uri)->as_string;
-  }
-
-Define C<translate()> method as a class method. Argument $uri is a
-string that represents URI.
-
-At last, remember to add the following line to httpd.conf:
-
-  PerlTransHandler Apache::No404Proxy::Google
-
-=head1 RESTRICTIONS FOR USE
-
-B<READ THIS> before you use this proxy, especially for the default
-Google implementation.
-
-This proxy may or may not break terms of service of Google. In fact,
-Google prohibits I<Automatic Query> without their permissions. See
-http://www.google.com/terms_of_service.html for details.
-
-Yes, this means you are recommended to contact staff at Google,
-otherwise your IP address would be blacklisted from Google :( The one
-you should get contact with is Ray Sidney, whose email addy is
-E<lt>ray@google.comE<gt>. Thanks to Ray for his kindness.
 
 =head1 AUTHOR
 
@@ -164,6 +105,6 @@ This module comes B<WITHOUT ANY WARRANTY>.
 
 =head1 SEE ALSO
 
-L<Apache::ProxyPassThru>, L<LWP::UserAgent>, L<Apache::No404Proxy::Google>
+L<Apache::ProxyPassThru>, http://www.google.com/apis/
 
 =cut

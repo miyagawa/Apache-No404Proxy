@@ -7,7 +7,8 @@ WriteMakefile(
     'PREREQ_PM' => {
 	'LWP::UserAgent' 	=> 1.80,
 	'URI' 			=> 1.15,
-	'WWW::Cache::Google' 	=> 0.02,
+#	'WWW::Cache::Google' 	=> 0.02,
 	'mod_perl' 		=> 1.21,
+	'SOAP::Lite'            => 0,
     },
 );

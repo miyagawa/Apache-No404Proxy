@@ -1,62 +1,20 @@
 NAME
-    Apache::No404Proxy - 404 Redirecting Proxy
+    Apache::No404Proxy - 404 free Proxy
 
 SYNOPSIS
       # in httpd.conf
       PerlTransHandler Apache::No404Proxy # default uses ::Google
+      PerlSetVar GoogleLicenseKey **************
 
 DESCRIPTION
     Oops, 404 Not found. But wait..., there is a Google cache!
 
     Apache::No404Proxy serves as a proxy server, which automaticaly detects
-    404 responses and redirects your browser to Google cache.
+    404 responses and fetches Google cache via SOAP. You need your Google
+    account to use this module. See Google Web API terms for details.
 
     Set your browser's proxy setting to Apache::No404Proxy based server, and
     it becomes 404 free now!
-
-    See also the section on "RESRICTIONS FOR USE" before you use this.
-
-SUBCLASSING
-    Default cache archive is Google's one. Here is how you customize this.
-
-    *   Declare your URL translator class.
-
-    *   Inherit from Apache::No404Proxy.
-
-    *   Define "translate()" method.
-
-    That's all. Here is an example of implementation, extracted from
-    Apache::No404Proxy::Google.
-
-      package Apache::No404Proxy::Google;
-
-      use WWW::Cache::Google;
-      use base qw(Apache::No404Proxy);
-
-      sub translate {
-          my($class, $uri) = @_;
-          return WWW::Cache::Google->new($uri)->as_string;
-      }
-
-    Define "translate()" method as a class method. Argument $uri is a string
-    that represents URI.
-
-    At last, remember to add the following line to httpd.conf:
-
-      PerlTransHandler Apache::No404Proxy::Google
-
-RESTRICTIONS FOR USE
-    READ THIS before you use this proxy, especially for the default Google
-    implementation.
-
-    This proxy may or may not break terms of service of Google. In fact,
-    Google prohibits *Automatic Query* without their permissions. See
-    http://www.google.com/terms_of_service.html for details.
-
-    Yes, this means you are recommended to contact staff at Google,
-    otherwise your IP address would be blacklisted from Google :( The one
-    you should get contact with is Ray Sidney, whose email addy is
-    <ray@google.com>. Thanks to Ray for his kindness.
 
 AUTHOR
     Tastuhiko Miyagawa <miyagawa@bulknews.net>
@@ -67,6 +25,5 @@ AUTHOR
     This module comes WITHOUT ANY WARRANTY.
 
 SEE ALSO
-    the Apache::ProxyPassThru manpage, the LWP::UserAgent manpage, the
-    Apache::No404Proxy::Google manpage
+    the Apache::ProxyPassThru manpage, http://www.google.com/apis/
 
