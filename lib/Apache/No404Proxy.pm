@@ -31,7 +31,7 @@ sub proxy_handler {
 
     my $res = LWP::UserAgent->new->simple_request($request);
     $r->content_type($res->header('Content-type'));
-    if ($res->code == 404) {
+    if ($res->code == 404 && ! $class->exclude($r->uri)) {
 	my $cache = $class->translate($r->uri);
 	# detect LOOP
 	{
@@ -60,6 +60,12 @@ sub proxy_handler {
     return OK;
 }
 
+# default excludes image files
+sub exclude {
+    my($class, $uri) = @_;
+    return $uri =~ /\.(?:gif|jpe?g|png)$/i;
+}
+
 sub translate {
     my($class, $uri) = @_;
 
@@ -79,7 +85,7 @@ Apache::No404Proxy - 404 Redirecting Proxy
 =head1 SYNOPSIS
 
   # in httpd.conf
-  PerlTransHandler Apache::No404Proxy
+  PerlTransHandler Apache::No404Proxy # default uses ::Google
 
 =head1 DESCRIPTION
 
@@ -87,6 +93,9 @@ Oops, 404 Not found. But wait..., there is a Google cache!
 
 Apache::No404Proxy serves as a proxy server, which automaticaly
 detects 404 responses and redirects your browser to Google cache.
+
+Set your browser's proxy setting to Apache::No404Proxy based server,
+and it becomes 404 free now!
 
 =head1 SUBCLASSING
 
@@ -126,7 +135,13 @@ string that represents URI.
 
 At last, remember to add the following line to httpd.conf:
 
-  PerlHandler Apache::No404Proxy::Google
+  PerlTransHandler Apache::No404Proxy::Google
+
+=head1 RESTRICTIONS FOR USE
+
+Use of this proxy is restricted for personal use. Otherwise, you may
+or may not break terms of service of Google. See
+http://www.google.com/terms_of_service.html for details.
 
 =head1 AUTHOR
 
@@ -134,6 +149,8 @@ Tastuhiko Miyagawa <miyagawa@bulknews.net>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
+
+This module comes B<WITHOUT ANY WARRANTY>.
 
 =head1 SEE ALSO
 
