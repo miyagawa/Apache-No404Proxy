@@ -106,10 +106,6 @@ Inherit from Apache::No404Proxy.
 
 Define C<translate()> method.
 
-=item *
-
-Add C<PerlTransHandler Your::URLTranslator> in httpd.conf or so.
-
 =back
 
 That's all. Here is an example of implementation, extracted from
@@ -127,6 +123,10 @@ Apache::No404Proxy::Google.
 
 Define C<translate()> method as a class method. Argument $uri is a
 string that represents URI.
+
+At last, remember to add the following line to httpd.conf:
+
+  PerlHandler Apache::No404Proxy::Google
 
 =head1 AUTHOR
 
