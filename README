@@ -1,0 +1,48 @@
+NAME
+    Apache::No404Proxy - 404 Redirecting Proxy
+
+SYNOPSIS
+      # in httpd.conf
+      PerlTransHandler Apache::No404Proxy
+
+DESCRIPTION
+    Oops, 404 Not found. But wait..., there is a Google cache!
+
+    Apache::No404Proxy serves as a proxy server, which automaticaly detects
+    404 responses and redirects your browser to Google cache.
+
+SUBCLASSING
+    Default cache archive is Google's one. Here is how you customize this.
+
+    *   Declare your URL translator class.
+
+    *   Inherit from Apache::No404Proxy.
+
+    *   Define "translate()" method.
+
+    That's all. Here is an example of implementation, extracted from
+    Apache::No404Proxy::Google.
+
+      package Apache::No404Proxy::Google;
+
+      use WWW::Cache::Google;
+      use base qw(Apache::No404Proxy);
+
+      sub translate {
+          my($class, $uri) = @_;
+          return WWW::Cache::Google->new($uri)->as_string;
+      }
+
+    Define "translate()" method as a class method. Argument $uri is a string
+    that represents URI.
+
+AUTHOR
+    Tastuhiko Miyagawa <miyagawa@bulknews.net>
+
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
+SEE ALSO
+    the Apache::ProxyPassThru manpage, the LWP::UserAgent manpage, the
+    Apache::No404Proxy::Google manpage
+
