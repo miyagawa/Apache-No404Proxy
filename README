@@ -14,6 +14,8 @@ DESCRIPTION
     Set your browser's proxy setting to Apache::No404Proxy based server, and
     it becomes 404 free now!
 
+    See also the section on "RESRICTIONS FOR USE" before you use this.
+
 SUBCLASSING
     Default cache archive is Google's one. Here is how you customize this.
 
@@ -44,9 +46,17 @@ SUBCLASSING
       PerlTransHandler Apache::No404Proxy::Google
 
 RESTRICTIONS FOR USE
-    Use of this proxy is restricted for personal use. Otherwise, you may or
-    may not break terms of service of Google. See
+    READ THIS before you use this proxy, especially for the default Google
+    implementation.
+
+    This proxy may or may not break terms of service of Google. In fact,
+    Google prohibits *Automatic Query* without their permissions. See
     http://www.google.com/terms_of_service.html for details.
+
+    Yes, this means you are recommended to contact staff at Google,
+    otherwise your IP address would be blacklisted from Google :( The one
+    you should get contact with is Ray Sidney, whose email addy is
+    <ray@google.com>. Thanks to Ray for his kindness.
 
 AUTHOR
     Tastuhiko Miyagawa <miyagawa@bulknews.net>

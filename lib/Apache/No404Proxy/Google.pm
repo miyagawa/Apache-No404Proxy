@@ -33,6 +33,11 @@ URI to Google cache.
 See L<Apache::No404Proxy/"SUBCLASSING"> for using other cache archive on
 the web other than Google.
 
+=head1 CAVEAT
+
+See L<Apache::No404Proxy/"RESTRICTIONS FOR USE"> before using it. If
+you have not done, B<DO IT NOW!>
+
 =head1 AUTHOR
 
 Tastuhiko Miyagawa <miyagawa@bulknews.net>

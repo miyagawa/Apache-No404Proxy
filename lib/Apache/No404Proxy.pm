@@ -2,7 +2,7 @@ package Apache::No404Proxy;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = '0.02';
+$VERSION = '0.03';
 
 use Apache::Constants qw(:response);
 use LWP::UserAgent;
@@ -97,6 +97,8 @@ detects 404 responses and redirects your browser to Google cache.
 Set your browser's proxy setting to Apache::No404Proxy based server,
 and it becomes 404 free now!
 
+See also L</"RESRICTIONS FOR USE"> before you use this.
+
 =head1 SUBCLASSING
 
 Default cache archive is Google's one. Here is how you customize this.
@@ -139,9 +141,17 @@ At last, remember to add the following line to httpd.conf:
 
 =head1 RESTRICTIONS FOR USE
 
-Use of this proxy is restricted for personal use. Otherwise, you may
-or may not break terms of service of Google. See
+B<READ THIS> before you use this proxy, especially for the default
+Google implementation.
+
+This proxy may or may not break terms of service of Google. In fact,
+Google prohibits I<Automatic Query> without their permissions. See
 http://www.google.com/terms_of_service.html for details.
+
+Yes, this means you are recommended to contact staff at Google,
+otherwise your IP address would be blacklisted from Google :( The one
+you should get contact with is Ray Sidney, whose email addy is
+E<lt>ray@google.comE<gt>. Thanks to Ray for his kindness.
 
 =head1 AUTHOR
 
